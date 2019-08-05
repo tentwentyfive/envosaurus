@@ -10,3 +10,9 @@ env:
 
 go:
   - 1.12
+
+script:
+  - go build
+  - test -z $(gofmt -d -s .)
+  - go vet
+  - go test -v -race
