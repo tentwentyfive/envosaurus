@@ -1,7 +1,12 @@
 language: go
 
-environment:
-  - GO11MODULE=on
+branches:
+  only:
+    - "master"
+
+env:
+  global:
+    - GO11MODULE=on
 
 go:
   - 1.12
