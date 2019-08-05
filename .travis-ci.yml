@@ -1,0 +1,7 @@
+language: go
+
+environment:
+  - GO11MODULE=on
+
+go:
+  - 1.12
