@@ -4,12 +4,8 @@ branches:
   only:
     - "master"
 
-env:
-  global:
-    - GO11MODULE=on
-
 go:
-  - 1.12
+  - 1.15
 
 script:
   - go build
