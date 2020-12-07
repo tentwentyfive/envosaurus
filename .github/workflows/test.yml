@@ -12,12 +12,12 @@ jobs:
   test:
     runs-on: ubuntu-20.04
 
-  steps:
-  - uses: actions/checkout@v2
-  - uses: actions/setup-go@v2
-    with:
-      go-version: '^1.15.5' # The Go version to download (if necessary) and use.
-  - run: go build
-  - run: test -z $(gofmt -d -s .)
-  - run: go vet
-  - run: go test -v -race
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.15.5' # The Go version to download (if necessary) and use.
+    - run: go build
+    - run: test -z $(gofmt -d -s .)
+    - run: go vet
+    - run: go test -v -race
