@@ -2,7 +2,7 @@ language: go
 
 branches:
   only:
-    - "master"
+    - "main"
 
 go:
   - 1.15
