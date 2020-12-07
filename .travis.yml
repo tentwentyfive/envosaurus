@@ -1,0 +1,14 @@
+language: go
+
+branches:
+  only:
+    - "master"
+
+go:
+  - 1.15
+
+script:
+  - go build
+  - test -z $(gofmt -d -s .)
+  - go vet
+  - go test -v -race

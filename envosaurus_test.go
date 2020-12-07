@@ -1,0 +1,54 @@
+package main
+
+import (
+	"encoding/json"
+	"log"
+	"os/user"
+	"reflect"
+	"testing"
+
+	"github.com/tentwentyfive/envosaurus/specs"
+)
+
+func TestUnMarshallProject(t *testing.T) {
+	git := specs.GitSpec{Clone: "foo"}
+	var p = []specs.ProjectSpec{{Name: "fred", Git: nil}, {Name: "wilma", Git: &git}}
+	var g []specs.ProjectSpec
+	b := `[{"name": "fred"}, {"name": "wilma", "git": {"clone": "foo"}}]`
+	json.Unmarshal([]byte(b), &g)
+
+	if !reflect.DeepEqual(p, g) {
+		t.Error("Expected ", p, "got ", g)
+	}
+
+}
+
+func TestLoadProjects(t *testing.T) {
+	path := "samples/projects.json"
+	var projects specs.ProjectsSpec
+
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := projects.LoadProjects(path); err != nil {
+		t.Error("Unable to load ", path, ": ", err)
+	}
+
+	kafkaExGit := specs.GitSpec{Clone: "git@github.com:kafkaex/kafka_ex"}
+	kayrockGit := specs.GitSpec{Clone: "git@github.com:dantswain/kayrock"}
+	kafkaExExamplesGit := specs.GitSpec{Clone: "git@github.com:dantswain/kafka_ex_examples"}
+	expect := specs.ProjectsSpec{
+		RootDirectory: usr.HomeDir + "/envosrc",
+		Projects: []specs.ProjectSpec{
+			{Name: "KafkaEx", Git: &kafkaExGit},
+			{Name: "Kayrock", Git: &kayrockGit},
+			{Name: "KafkaExExamples", Git: &kafkaExExamplesGit},
+		},
+	}
+
+	if !reflect.DeepEqual(projects, expect) {
+		t.Error("Expected ", expect, "got ", projects)
+	}
+}
