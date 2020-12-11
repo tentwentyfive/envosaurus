@@ -37,6 +37,7 @@ func (projects *ProjectsSpec) LoadProjects(path string) error {
 	return nil
 }
 
+// Write write projects to the given path
 func (projects *ProjectsSpec) Write(path string) error {
 	jsonData, err := json.MarshalIndent(projects, "", "  ")
 	if err != nil {
@@ -47,6 +48,7 @@ func (projects *ProjectsSpec) Write(path string) error {
 	return writeErr
 }
 
+// Contains returns true if the collection contains a matching project
 func (projects *ProjectsSpec) Contains(projectSpec *ProjectSpec) bool {
 	for _, p := range projects.Projects {
 		if p.Git.Clone == projectSpec.Git.Clone && p.Name == projectSpec.Name {
