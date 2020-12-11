@@ -41,6 +41,16 @@ where `projects.json` has the following structure (see `samples/projects.json`):
 **NOTE** Make sure you have `ssh-agent` running and all relevant identities
 loaded.
 
+### Add
+
+To add a repo to a spec file:
+
+```
+envosaurus add --repo-config path/to/projects.json
+```
+
+This will add the git repository at the current path to the projects repository.
+
 ## Contributing
 
 Standard procedure should apply here.  Fork the repo, make a PR, all tests
