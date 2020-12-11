@@ -36,3 +36,22 @@ func (projects *ProjectsSpec) LoadProjects(path string) error {
 	projects.RootDirectory = os.ExpandEnv(projects.RootDirectory)
 	return nil
 }
+
+func (projects *ProjectsSpec) Write(path string) error {
+	jsonData, err := json.MarshalIndent(projects, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	writeErr := ioutil.WriteFile(path, jsonData, 0644)
+	return writeErr
+}
+
+func (projects *ProjectsSpec) Contains(projectSpec *ProjectSpec) bool {
+	for _, p := range projects.Projects {
+		if p.Git.Clone == projectSpec.Git.Clone && p.Name == projectSpec.Name {
+			return true
+		}
+	}
+	return false
+}
