@@ -29,8 +29,9 @@ var cloneCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Printf("Ensuring directory %s exists\n", projects.RootDirectory)
-		os.MkdirAll(projects.RootDirectory, os.ModePerm)
+		rootDir := os.ExpandEnv(projects.RootDirectory)
+		fmt.Printf("Ensuring directory %s exists\n", rootDir)
+		os.MkdirAll(rootDir, os.ModePerm)
 
 		sshAuth, err := ssh.DefaultAuthBuilder("git")
 		if err != nil {
@@ -42,7 +43,7 @@ var cloneCmd = &cobra.Command{
 			parts := strings.Split(repo.Git.Clone, "/")
 			lastPart := parts[len(parts)-1]
 
-			toDir := filepath.Join(projects.RootDirectory, lastPart)
+			toDir := filepath.Join(rootDir, lastPart)
 
 			fmt.Printf("\nCloning %s to %s\n", repo.Name, toDir)
 			_, err := git.PlainClone(toDir, false, &git.CloneOptions{
