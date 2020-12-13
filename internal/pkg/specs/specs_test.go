@@ -1,4 +1,4 @@
-package main
+package specs
 
 import (
 	"encoding/json"
@@ -6,14 +6,12 @@ import (
 	"os/user"
 	"reflect"
 	"testing"
-
-	"github.com/tentwentyfive/envosaurus/specs"
 )
 
 func TestUnMarshallProject(t *testing.T) {
-	git := specs.GitSpec{Clone: "foo"}
-	var p = []specs.ProjectSpec{{Name: "fred", Git: nil}, {Name: "wilma", Git: &git}}
-	var g []specs.ProjectSpec
+	git := GitSpec{Clone: "foo"}
+	var p = []ProjectSpec{{Name: "fred", Git: nil}, {Name: "wilma", Git: &git}}
+	var g []ProjectSpec
 	b := `[{"name": "fred"}, {"name": "wilma", "git": {"clone": "foo"}}]`
 	json.Unmarshal([]byte(b), &g)
 
@@ -24,8 +22,8 @@ func TestUnMarshallProject(t *testing.T) {
 }
 
 func TestLoadProjects(t *testing.T) {
-	path := "samples/projects.json"
-	var projects specs.ProjectsSpec
+	path := "../../../samples/projects.json"
+	var projects ProjectsSpec
 
 	usr, err := user.Current()
 	if err != nil {
@@ -36,12 +34,12 @@ func TestLoadProjects(t *testing.T) {
 		t.Error("Unable to load ", path, ": ", err)
 	}
 
-	kafkaExGit := specs.GitSpec{Clone: "git@github.com:kafkaex/kafka_ex"}
-	kayrockGit := specs.GitSpec{Clone: "git@github.com:dantswain/kayrock"}
-	kafkaExExamplesGit := specs.GitSpec{Clone: "git@github.com:dantswain/kafka_ex_examples"}
-	expect := specs.ProjectsSpec{
+	kafkaExGit := GitSpec{Clone: "git@github.com:kafkaex/kafka_ex"}
+	kayrockGit := GitSpec{Clone: "git@github.com:dantswain/kayrock"}
+	kafkaExExamplesGit := GitSpec{Clone: "git@github.com:dantswain/kafka_ex_examples"}
+	expect := ProjectsSpec{
 		RootDirectory: usr.HomeDir + "/envosrc",
-		Projects: []specs.ProjectSpec{
+		Projects: []ProjectSpec{
 			{Name: "KafkaEx", Git: &kafkaExGit},
 			{Name: "Kayrock", Git: &kayrockGit},
 			{Name: "KafkaExExamples", Git: &kafkaExExamplesGit},

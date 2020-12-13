@@ -1,4 +1,4 @@
-package cmd
+package cli
 
 import (
 	"fmt"
@@ -17,7 +17,6 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// Execute main execution hook
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
