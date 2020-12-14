@@ -11,10 +11,9 @@ import (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add [path]",
+	Use:   "add",
 	Short: "Add a repository",
-	Long:  `Add the repository at [path] repository to your config`,
-	Args:  cobra.ExactArgs(1),
+	Long:  `Add the repository in the current directory to your config`,
 	Run: func(cmd *cobra.Command, args []string) {
 		repo, err := git.PlainOpen(".")
 		if err != nil {
