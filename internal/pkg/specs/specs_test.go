@@ -2,8 +2,6 @@ package specs
 
 import (
 	"encoding/json"
-	"log"
-	"os/user"
 	"reflect"
 	"testing"
 )
@@ -25,11 +23,6 @@ func TestLoadProjects(t *testing.T) {
 	path := "../../../samples/projects.json"
 	var projects ProjectsSpec
 
-	usr, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	if err := projects.LoadProjects(path); err != nil {
 		t.Error("Unable to load ", path, ": ", err)
 	}
@@ -38,7 +31,7 @@ func TestLoadProjects(t *testing.T) {
 	kayrockGit := GitSpec{Clone: "git@github.com:dantswain/kayrock"}
 	kafkaExExamplesGit := GitSpec{Clone: "git@github.com:dantswain/kafka_ex_examples"}
 	expect := ProjectsSpec{
-		RootDirectory: usr.HomeDir + "/envosrc",
+		RootDirectory: "${HOME}/envosrc",
 		Projects: []ProjectSpec{
 			{Name: "KafkaEx", Git: &kafkaExGit},
 			{Name: "Kayrock", Git: &kayrockGit},

@@ -33,7 +33,6 @@ func (projects *ProjectsSpec) LoadProjects(path string) error {
 	byteVal, _ := ioutil.ReadAll(jsonFile)
 	json.Unmarshal(byteVal, projects)
 
-	projects.RootDirectory = os.ExpandEnv(projects.RootDirectory)
 	return nil
 }
 
