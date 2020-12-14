@@ -11,17 +11,11 @@ import (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add",
+	Use:   "add [path]",
 	Short: "Add a repository",
-	Long:  `Add a repository to your config`,
+	Long:  `Add the repository at [path] repository to your config`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var projects specs.ProjectsSpec
-		if err := projects.LoadProjects(repoConfig); err != nil {
-			fmt.Println("Error loading projects")
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
 		repo, err := git.PlainOpen(".")
 		if err != nil {
 			fmt.Println("Error determining repo root")
@@ -54,6 +48,19 @@ var addCmd = &cobra.Command{
 
 		gitSpec := specs.GitSpec{Clone: url}
 		projectSpec := specs.ProjectSpec{Name: name, Git: &gitSpec}
+
+		var projects specs.ProjectsSpec
+
+		if specs.RepoFileIsReadable(repoConfig) {
+			if err := projects.LoadProjects(repoConfig); err != nil {
+				fmt.Println("Error loading projects")
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		} else {
+			// by default use the parent directory of the project being added
+			projects.RootDirectory = filepath.Dir(absPath)
+		}
 
 		if projects.Contains(&projectSpec) {
 			fmt.Println("Project already in file")
