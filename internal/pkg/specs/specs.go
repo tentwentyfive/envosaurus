@@ -74,7 +74,7 @@ func (projects *ProjectsSpec) Contains(projectSpec *ProjectSpec) bool {
 
 // RepoFromPath returns a ProjectSpec from a repo at the given path
 func RepoFromPath(path string) (ProjectSpec, error) {
-	repo, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{DetectDotGit: true})
+	repo, err := git.PlainOpenWithOptions(path, &git.PlainOpenOptions{DetectDotGit: true})
 	if err != nil {
 		wrappedError := fmt.Errorf("Unable find a repository: %w", err)
 		return ProjectSpec{Git: &GitSpec{repo: repo}}, wrappedError
