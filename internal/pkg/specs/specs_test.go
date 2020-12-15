@@ -2,7 +2,9 @@ package specs
 
 import (
 	"encoding/json"
+	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -41,5 +43,40 @@ func TestLoadProjects(t *testing.T) {
 
 	if !reflect.DeepEqual(projects, expect) {
 		t.Error("Expected ", expect, "got ", projects)
+	}
+}
+
+func TestDetermineRepo(t *testing.T) {
+	project, err := RepoFromPath(".")
+	if err != nil {
+		t.Error("Unexpected error ", err)
+	}
+
+	if project.Name != "envosaurus" {
+		t.Error("Unexpected name ", project.Name)
+	}
+
+	if !strings.HasSuffix(project.Git.Clone, "tentwentyfive/envosaurus") {
+		t.Error("Unexpected remote ", project.Git.Clone)
+	}
+}
+
+func TestDetermineRepoInSubdirectory(t *testing.T) {
+	path, err := os.Getwd()
+	if err != nil {
+		t.Error("Couldn't get working directory ", err)
+	}
+
+	project, err := RepoFromPath(path + "/internal/pkg/specs")
+	if err != nil {
+		t.Error("Unexpected error ", err)
+	}
+
+	if project.Name != "envosaurus" {
+		t.Error("Unexpected name ", project.Name)
+	}
+
+	if !strings.HasSuffix(project.Git.Clone, "tentwentyfive/envosaurus") {
+		t.Error("Unexpected remote ", project.Git.Clone)
 	}
 }

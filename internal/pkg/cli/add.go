@@ -7,7 +7,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tentwentyfive/envosaurus/internal/pkg/specs"
-	"gopkg.in/src-d/go-git.v4"
 )
 
 var addCmd = &cobra.Command{
@@ -15,38 +14,17 @@ var addCmd = &cobra.Command{
 	Short: "Add a repository",
 	Long:  `Add the repository in the current directory to your config`,
 	Run: func(cmd *cobra.Command, args []string) {
-		repo, err := git.PlainOpen(".")
+		projectSpec, err := specs.RepoFromPath(".")
 		if err != nil {
-			fmt.Println("Error determining repo root")
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		remotes, err := repo.Remotes()
+		root, err := projectSpec.Git.RepoRoot()
 		if err != nil {
-			fmt.Println("Unable to list remotes")
 			fmt.Println(err)
 			os.Exit(1)
 		}
-
-		url := ""
-		for _, remote := range remotes {
-			config := remote.Config()
-			if config.Name == "origin" {
-				url = config.URLs[0]
-			}
-		}
-
-		absPath, err := filepath.Abs(".")
-		if err != nil {
-			fmt.Println("Unable to determine absolute path")
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		name := filepath.Base(absPath)
-
-		gitSpec := specs.GitSpec{Clone: url}
-		projectSpec := specs.ProjectSpec{Name: name, Git: &gitSpec}
 
 		var projects specs.ProjectsSpec
 
@@ -58,7 +36,7 @@ var addCmd = &cobra.Command{
 			}
 		} else {
 			// by default use the parent directory of the project being added
-			projects.RootDirectory = filepath.Dir(absPath)
+			projects.RootDirectory = filepath.Dir(root)
 		}
 
 		if projects.Contains(&projectSpec) {
@@ -73,7 +51,7 @@ var addCmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		fmt.Printf("%s written to %s\n", name, repoConfig)
+		fmt.Printf("%s written to %s\n", projectSpec.Name, repoConfig)
 	},
 }
 
