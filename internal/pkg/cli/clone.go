@@ -2,9 +2,7 @@ package cli
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strings"
 
@@ -23,6 +21,12 @@ var cloneCmd = &cobra.Command{
 	Long:  `Clone repositories`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var projects specs.ProjectsSpec
+
+		if !specs.RepoFileIsReadable(repoConfig) {
+			fmt.Printf("Unable to load config file %s\n", repoConfig)
+			os.Exit(1)
+		}
+
 		if err := projects.LoadProjects(repoConfig); err != nil {
 			fmt.Println("Error loading projects")
 			fmt.Println(err)
@@ -68,13 +72,4 @@ var cloneCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(cloneCmd)
-
-	usr, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defaultRepoConfig := filepath.Join(usr.HomeDir, ".envosaurus", "repos.json")
-
-	rootCmd.PersistentFlags().StringVarP(&repoConfig, "repo-config", "r", defaultRepoConfig, "Path to repo config json file")
-	rootCmd.MarkFlagRequired("repo-config")
 }

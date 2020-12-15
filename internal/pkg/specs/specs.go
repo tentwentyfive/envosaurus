@@ -23,6 +23,15 @@ type ProjectSpec struct {
 	Git  *GitSpec `json:"git,omitempty"`
 }
 
+// RepoFileIsReadable check if the file exists and is readable
+func RepoFileIsReadable(path string) bool {
+	_, err := os.Open(path)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 // LoadProjects load projects from the given path
 func (projects *ProjectsSpec) LoadProjects(path string) error {
 	jsonFile, err := os.Open(path)
