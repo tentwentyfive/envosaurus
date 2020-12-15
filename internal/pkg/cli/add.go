@@ -7,7 +7,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tentwentyfive/envosaurus/internal/pkg/specs"
-	"gopkg.in/src-d/go-git.v4"
 )
 
 var addCmd = &cobra.Command{
@@ -15,39 +14,17 @@ var addCmd = &cobra.Command{
 	Short: "Add a repository",
 	Long:  `Add the repository in the current directory to your config`,
 	Run: func(cmd *cobra.Command, args []string) {
-		repo, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{DetectDotGit: true})
+		projectSpec, err := specs.RepoFromPath(".")
 		if err != nil {
-			fmt.Println("Error determining repo root")
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		remotes, err := repo.Remotes()
+		root, err := projectSpec.Git.RepoRoot()
 		if err != nil {
-			fmt.Println("Unable to list remotes")
 			fmt.Println(err)
 			os.Exit(1)
 		}
-
-		url := ""
-		for _, remote := range remotes {
-			config := remote.Config()
-			if config.Name == "origin" {
-				url = config.URLs[0]
-			}
-		}
-
-		worktree, err := repo.Worktree()
-		if err != nil {
-			fmt.Println("Unable to determine repository path")
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		root := worktree.Filesystem.Root()
-		name := filepath.Base(root)
-
-		gitSpec := specs.GitSpec{Clone: url}
-		projectSpec := specs.ProjectSpec{Name: name, Git: &gitSpec}
 
 		var projects specs.ProjectsSpec
 
@@ -74,7 +51,7 @@ var addCmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		fmt.Printf("%s written to %s\n", name, repoConfig)
+		fmt.Printf("%s written to %s\n", projectSpec.Name, repoConfig)
 	},
 }
 
