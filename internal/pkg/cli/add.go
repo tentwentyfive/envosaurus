@@ -15,7 +15,7 @@ var addCmd = &cobra.Command{
 	Short: "Add a repository",
 	Long:  `Add the repository in the current directory to your config`,
 	Run: func(cmd *cobra.Command, args []string) {
-		repo, err := git.PlainOpen(".")
+		repo, err := git.PlainOpenWithOptions(".", &git.PlainOpenOptions{DetectDotGit: true})
 		if err != nil {
 			fmt.Println("Error determining repo root")
 			fmt.Println(err)
@@ -37,13 +37,14 @@ var addCmd = &cobra.Command{
 			}
 		}
 
-		absPath, err := filepath.Abs(".")
+		worktree, err := repo.Worktree()
 		if err != nil {
-			fmt.Println("Unable to determine absolute path")
+			fmt.Println("Unable to determine repository path")
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		name := filepath.Base(absPath)
+		root := worktree.Filesystem.Root()
+		name := filepath.Base(root)
 
 		gitSpec := specs.GitSpec{Clone: url}
 		projectSpec := specs.ProjectSpec{Name: name, Git: &gitSpec}
@@ -58,7 +59,7 @@ var addCmd = &cobra.Command{
 			}
 		} else {
 			// by default use the parent directory of the project being added
-			projects.RootDirectory = filepath.Dir(absPath)
+			projects.RootDirectory = filepath.Dir(root)
 		}
 
 		if projects.Contains(&projectSpec) {
