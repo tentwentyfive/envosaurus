@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -55,7 +56,7 @@ func TestDetermineRepo(t *testing.T) {
 		t.Error("Unexpected name ", project.Name)
 	}
 
-	if project.Git.Clone != "git@github.com:tentwentyfive/envosaurus" {
+	if !strings.HasSuffix(project.Git.Clone, "tentwentyfive/envosaurus") {
 		t.Error("Unexpected remote ", project.Git.Clone)
 	}
 }
@@ -75,7 +76,7 @@ func TestDetermineRepoInSubdirectory(t *testing.T) {
 		t.Error("Unexpected name ", project.Name)
 	}
 
-	if project.Git.Clone != "git@github.com:tentwentyfive/envosaurus" {
+	if !strings.HasSuffix(project.Git.Clone, "tentwentyfive/envosaurus") {
 		t.Error("Unexpected remote ", project.Git.Clone)
 	}
 }
