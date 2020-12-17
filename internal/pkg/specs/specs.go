@@ -25,8 +25,8 @@ type GitSpec struct {
 
 // ProjectSpec describes a single project
 type ProjectSpec struct {
-	Name string   `json:"name"`
-	Git  *GitSpec `json:"git,omitempty"`
+	Name string  `json:"name"`
+	Git  GitSpec `json:"git,omitempty"`
 }
 
 // RepoFileIsReadable check if the file exists and is readable
@@ -77,13 +77,13 @@ func RepoFromPath(path string) (ProjectSpec, error) {
 	repo, err := git.PlainOpenWithOptions(path, &git.PlainOpenOptions{DetectDotGit: true})
 	if err != nil {
 		wrappedError := fmt.Errorf("Unable find a repository: %w", err)
-		return ProjectSpec{Git: &GitSpec{repo: repo}}, wrappedError
+		return ProjectSpec{Git: GitSpec{repo: repo}}, wrappedError
 	}
 
 	remotes, err := repo.Remotes()
 	if err != nil {
 		wrappedError := fmt.Errorf("Unable to determine remotes: %w", err)
-		return ProjectSpec{Git: &GitSpec{repo: repo}}, wrappedError
+		return ProjectSpec{Git: GitSpec{repo: repo}}, wrappedError
 	}
 
 	url := ""
@@ -97,11 +97,11 @@ func RepoFromPath(path string) (ProjectSpec, error) {
 	gitSpec := GitSpec{Clone: url, repo: repo}
 	root, err := gitSpec.RepoRoot()
 	if err != nil {
-		return ProjectSpec{Git: &gitSpec}, err
+		return ProjectSpec{Git: gitSpec}, err
 	}
 
 	name := filepath.Base(root)
-	return ProjectSpec{Name: name, Git: &gitSpec}, nil
+	return ProjectSpec{Name: name, Git: gitSpec}, nil
 }
 
 // RepoRoot returns the root path of the repository
