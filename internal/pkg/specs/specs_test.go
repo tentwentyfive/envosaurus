@@ -10,7 +10,7 @@ import (
 
 func TestUnMarshallProject(t *testing.T) {
 	git := GitSpec{Clone: "foo"}
-	var p = []ProjectSpec{{Name: "fred", Git: nil}, {Name: "wilma", Git: &git}}
+	var p = []ProjectSpec{{Name: "fred", Git: GitSpec{}}, {Name: "wilma", Git: git}}
 	var g []ProjectSpec
 	b := `[{"name": "fred"}, {"name": "wilma", "git": {"clone": "foo"}}]`
 	json.Unmarshal([]byte(b), &g)
@@ -35,9 +35,9 @@ func TestLoadProjects(t *testing.T) {
 	expect := ProjectsSpec{
 		RootDirectory: "${HOME}/envosrc",
 		Projects: []ProjectSpec{
-			{Name: "KafkaEx", Git: &kafkaExGit},
-			{Name: "Kayrock", Git: &kayrockGit},
-			{Name: "KafkaExExamples", Git: &kafkaExExamplesGit},
+			{Name: "KafkaEx", Git: kafkaExGit},
+			{Name: "Kayrock", Git: kayrockGit},
+			{Name: "KafkaExExamples", Git: kafkaExExamplesGit},
 		},
 	}
 
