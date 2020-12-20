@@ -39,10 +39,18 @@ var addCmd = &cobra.Command{
 			projects.RootDirectory = filepath.Dir(root)
 		}
 
-		if projects.Contains(&projectSpec) {
-			fmt.Println("Project already in file")
+		if projects.ContainsProjectAtPath(&projectSpec) {
+			fmt.Println("The project file already contains a project at the path ", projectSpec.Path)
 			os.Exit(1)
 		}
+
+		relPath, err := filepath.Rel(projects.RootDirectory, projectSpec.Path)
+		if err != nil {
+			fmt.Println("Unable to compute relative path")
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		projectSpec.Path = relPath
 
 		projects.Projects = append(projects.Projects, projectSpec)
 

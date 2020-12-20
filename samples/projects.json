@@ -2,18 +2,21 @@
     "rootDirectory": "${HOME}/envosrc",
     "projects": [{
             "name": "KafkaEx",
+            "path": "kafka/kafka_ex",
             "git": {
                 "clone": "git@github.com:kafkaex/kafka_ex"
             }
         },
         {
             "name": "Kayrock",
+            "path": "kafka/kayrock",
             "git": {
                 "clone": "git@github.com:dantswain/kayrock"
             }
         },
         {
             "name": "KafkaExExamples",
+            "path": "kafka/kafka_ex_examples",
             "git": {
                 "clone": "git@github.com:dantswain/kafka_ex_examples"
             }

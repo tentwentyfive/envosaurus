@@ -26,6 +26,7 @@ type GitSpec struct {
 // ProjectSpec describes a single project
 type ProjectSpec struct {
 	Name string  `json:"name"`
+	Path string  `json:"path"`
 	Git  GitSpec `json:"git,omitempty"`
 }
 
@@ -62,10 +63,11 @@ func (projects *ProjectsSpec) Write(path string) error {
 	return writeErr
 }
 
-// Contains returns true if the collection contains a matching project
-func (projects *ProjectsSpec) Contains(projectSpec *ProjectSpec) bool {
+// ContainsProjectAtPath returns true if the collection already contains
+// a project at the same path
+func (projects *ProjectsSpec) ContainsProjectAtPath(projectSpec *ProjectSpec) bool {
 	for _, p := range projects.Projects {
-		if p.Git.Clone == projectSpec.Git.Clone && p.Name == projectSpec.Name {
+		if p.Path == projectSpec.Path {
 			return true
 		}
 	}
@@ -101,7 +103,7 @@ func RepoFromPath(path string) (ProjectSpec, error) {
 	}
 
 	name := filepath.Base(root)
-	return ProjectSpec{Name: name, Git: gitSpec}, nil
+	return ProjectSpec{Name: name, Path: root, Git: gitSpec}, nil
 }
 
 // RepoRoot returns the root path of the repository
@@ -114,4 +116,16 @@ func (gitSpec *GitSpec) RepoRoot() (string, error) {
 	}
 
 	return worktree.Filesystem.Root(), nil
+}
+
+// GetCloneOpts returns the path to clone into and git.CloneOptions values
+func (projectSpec *ProjectSpec) GetCloneOpts(rootDir string) (string, git.CloneOptions, error) {
+	toDir, err := filepath.Abs(filepath.Join(rootDir, projectSpec.Path))
+	if err != nil {
+		return toDir, git.CloneOptions{}, err
+	}
+
+	return toDir, git.CloneOptions{
+		URL: projectSpec.Git.Clone,
+	}, nil
 }
