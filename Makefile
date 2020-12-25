@@ -6,14 +6,9 @@ TAG?=""
 .PHONY: test
 test: fmt lint vet test-unit go-mod-tidy
 
-# Download dependencies
-.PHONY: mod-download
-mod-download:
-	go mod download
-
 # Run unit tests
 .PHONY: test-unit
-test-unit: mod-download
+test-unit:
 	gotestsum --format testname -- -race ./...
 
 # Clean go.mod
