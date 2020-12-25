@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/tentwentyfive/envosaurus/internal/pkg/specs"
@@ -44,17 +42,17 @@ var cloneCmd = &cobra.Command{
 		}
 
 		for _, repo := range projects.Projects {
-			parts := strings.Split(repo.Git.Clone, "/")
-			lastPart := parts[len(parts)-1]
+			toDir, cloneOpts, err := repo.GetCloneOpts(rootDir)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
 
-			toDir := filepath.Join(rootDir, lastPart)
+			cloneOpts.Progress = os.Stdout
+			cloneOpts.Auth = sshAuth
 
 			fmt.Printf("\nCloning %s to %s\n", repo.Name, toDir)
-			_, err := git.PlainClone(toDir, false, &git.CloneOptions{
-				URL:      repo.Git.Clone,
-				Progress: os.Stdout,
-				Auth:     sshAuth,
-			})
+			_, err = git.PlainClone(toDir, false, &cloneOpts)
 
 			if err == git.ErrRepositoryAlreadyExists {
 				// this is ok, we just want to let the user know and continue
@@ -66,7 +64,6 @@ var cloneCmd = &cobra.Command{
 		}
 
 		fmt.Println("\nAll repos cloned!")
-
 	},
 }
 
