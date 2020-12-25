@@ -9,7 +9,7 @@ test: fmt lint vet test-unit go-mod-tidy
 # Run unit tests
 .PHONY: test-unit
 test-unit:
-	go test -v -race ./...
+	gotestsum --format testname -- -race ./...
 
 # Clean go.mod
 .PHONY: go-mod-tidy
